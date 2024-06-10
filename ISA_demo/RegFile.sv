@@ -1,25 +1,36 @@
 module RegFile (
-    input clk,
-    input regWrite,
-    input [2:0] reg1,
-    input [2:0] reg2,
-    input [2:0] writeReg,
-    input [7:0] writeData,
-    output [7:0] reg1Data,
-    output [7:0] reg2Data
+    input logic clk,
+    input logic regWrite,
+    input logic [2:0] reg1,
+    input logic [2:0] reg2,
+    input logic [2:0] writeReg,
+    input logic [7:0] writeData,
+    output logic [7:0] reg1Data,
+    output logic [7:0] reg2Data
 );
 
-    reg [7:0] registers [0:7]; // 8 registers
+    // Initialize registers
+    logic [7:0] registers [0:7] = '{8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0};
 
-    assign reg1Data = registers[reg1];
-    assign reg2Data = registers[reg2];
+    // Assign outputs from registers
+    always_comb begin
+        reg1Data = registers[reg1];
+        reg2Data = registers[reg2];
+    end
 
-    always @(posedge clk) begin
+    always_ff @(posedge clk) begin
         if (regWrite) begin
             registers[writeReg] <= writeData;
+            $display("Time: %0t | Writing %0h to register %0d", $time, writeData, writeReg);
         end
     end
+
+    // Debug: Monitor register reads
+    always @(reg1 or reg2) begin
+        $display("Time: %0t | Reading reg1: %0d (%0h), reg2: %0d (%0h)", $time, reg1, registers[reg1], reg2, registers[reg2]);
+    end
 endmodule
+
 
 
 // module RegFile(
