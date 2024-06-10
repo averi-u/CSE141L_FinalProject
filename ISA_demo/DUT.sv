@@ -1,4 +1,4 @@
-module Top (
+module DUT (
     input clk,
     input reset
 );
@@ -69,5 +69,14 @@ module Top (
     );
 
     assign nextPC = jump ? instruction[5:0] : (pc + 1);
+
+    // Logic to set done signal (customize this as per your design needs)
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            done <= 0;
+        end else if (/* some condition indicating program end */) begin
+            done <= 1;
+        end
+    end
 
 endmodule

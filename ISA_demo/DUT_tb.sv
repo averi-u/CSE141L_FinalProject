@@ -1,9 +1,9 @@
-module Top_tb;
+module DUT_tb;
 
     reg clk;
     reg reset;
 
-    Top top_instance (
+    DUT top_instance (
         .clk(clk),
         .reset(reset)
     );
