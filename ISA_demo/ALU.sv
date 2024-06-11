@@ -2,7 +2,7 @@ module ALU (
     input [2:0] opcode,       // 3-bit opcode
     input [7:0] operand1,     // 8-bit operand 1
     input [7:0] operand2,     // 8-bit operand 2
-    input [2:0] imm,          // 3-bit immediate value
+    input [3:0] imm,          // 4-bit immediate value
     output reg [7:0] result,  // 8-bit result
     output reg zero           // Zero flag for comparison
 );
@@ -13,6 +13,9 @@ module ALU (
     localparam XOR_OP = 3'b010;
     localparam SUB_OP = 3'b110;
     localparam SHF_OP = 3'b111;
+    localparam LOAD_OP = 3'b011;
+    localparam STORE_OP = 3'b100;
+    localparam JMP_OP = 3'b101;
 
     always @(*) begin
         case (opcode)
@@ -33,11 +36,26 @@ module ALU (
                 zero = (result == 8'b0);
             end
             SHF_OP: begin
-                if (imm[2]) // If imm[2] is 1, shift right
-                    result = operand1 >> imm[1:0];
+                if (imm[3]) // If imm[3] is 1, shift right
+                    result = operand1 >> imm[2:0];
                 else        // Else, shift left
-                    result = operand1 << imm[1:0];
+                    result = operand1 << imm[2:0];
                 zero = (result == 8'b0);
+            end
+            LOAD_OP: begin
+                // Load operation handled in memory, ALU just forwards the address
+                result = imm;
+                zero = (result == 8'b0);
+            end
+            STORE_OP: begin
+                // Store operation handled in memory, ALU just forwards the address
+                result = imm;
+                zero = (result == 8'b0);
+            end
+            JMP_OP: begin
+                // Jump operation, ALU just forwards the address
+                result = imm;
+                zero = 1'b0;
             end
             default: begin
                 result = 8'b0;
@@ -46,6 +64,7 @@ module ALU (
         endcase
     end
 endmodule
+
 
 
 // module ALU(

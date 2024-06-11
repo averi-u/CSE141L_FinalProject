@@ -1,6 +1,6 @@
 //control unit to interpret insns and generate signals
 module Ctrl (
-    input [2:0] opcode,
+    input [8:0] mach_code,
     output reg regWrite,
     output reg memRead,
     output reg memWrite,
@@ -9,7 +9,9 @@ module Ctrl (
     output reg jump
 );
 
-always @(*) begin
+reg [2:0] opcode;
+
+always_comb begin
 	// Default values
 	regWrite = 0;
 	memRead = 0;
@@ -17,6 +19,7 @@ always @(*) begin
 	aluSrc = 0;
 	branch = 0;
 	jump = 0;
+	opcode = mach_code[8:6];
 
 	case (opcode)
 		3'b000: regWrite = 1; // AND
